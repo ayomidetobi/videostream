@@ -6,9 +6,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: your_db_name
-      POSTGRES_USER: your_db_user
-      POSTGRES_PASSWORD: your_db_password
+      POSTGRES_DB: videostream
+      POSTGRES_USER: videostream_user
+      POSTGRES_PASSWORD: Vs3papCgCyZrIxF2rVkNWmWXYboOy4eX
 
   web:
     build: .

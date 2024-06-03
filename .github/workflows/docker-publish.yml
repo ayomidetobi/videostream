@@ -1,0 +1,41 @@
+name: Build and Push Docker image to AWS ECR
+
+on:
+  push:
+    branches:
+      - main  # Change to your branch name if different
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY }}
+
+      - name: Extract repository name and image tag
+        id: extract-tag
+        run: |
+          REPOSITORY_URI=${{ secrets.ECR_REPOSITORY }}
+          IMAGE_TAG=${GITHUB_SHA}
+          echo "::set-output name=repository::${REPOSITORY_URI}"
+          echo "::set-output name=tag::${IMAGE_TAG}"
+
+      - name: Build and push Docker image
+        env:
+          REPOSITORY_URI: ${{ steps.extract-tag.outputs.repository }}
+          IMAGE_TAG: ${{ steps.extract-tag.outputs.tag }}
+        run: |
+          docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+          docker push $REPOSITORY_URI:$IMAGE_TAG
+
+      - name: Log out of Docker
+        run: docker logout ${{ secrets.ECR_REPOSITORY }}
