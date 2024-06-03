@@ -24,6 +24,21 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code to the working directory
 COPY . /app/
 
+# Set environment variables
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+ARG AWS_STORAGE_BUCKET_NAME
+ARG AWS_REGION
+ARG DEBUG
+ARG DATABASE_URL
+
+ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+ENV AWS_STORAGE_BUCKET_NAME=${AWS_STORAGE_BUCKET_NAME}
+ENV AWS_REGION=${AWS_REGION}
+ENV DEBUG=${DEBUG}
+ENV DATABASE_URL=${DATABASE_URL}
+
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
