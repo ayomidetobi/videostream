@@ -45,8 +45,21 @@ jobs:
         env:
           REPOSITORY_URI: ${{ steps.extract-tag.outputs.repository }}
           IMAGE_TAG: ${{ steps.extract-tag.outputs.tag }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          DEBUG: ${{ secrets.DEBUG }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+          docker build \
+            --build-arg AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+            --build-arg AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+            --build-arg AWS_STORAGE_BUCKET_NAME=$AWS_STORAGE_BUCKET_NAME \
+            --build-arg AWS_REGION=$AWS_REGION \
+            --build-arg DEBUG=$DEBUG \
+            --build-arg DATABASE_URL=$DATABASE_URL \
+            -t $REPOSITORY_URI:$IMAGE_TAG .
           docker push $REPOSITORY_URI:$IMAGE_TAG
 
       - name: Log out of Docker
